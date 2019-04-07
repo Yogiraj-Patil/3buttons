@@ -1,7 +1,9 @@
 package com.example.a3buttons.InternerPack;
 
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,7 +26,7 @@ public class ConnectionClass extends AsyncTask<String, Void, String> {
         URL url = null;
         HttpURLConnection httpURLConnection = null;
         InputStream inputStream = null;
-        String response="";
+        String response="x";
         try{
             url = new URL(strings[0]);
 
@@ -36,14 +38,15 @@ public class ConnectionClass extends AsyncTask<String, Void, String> {
             httpURLConnection = (HttpURLConnection)url.openConnection();
             httpURLConnection.setReadTimeout(30000);
             httpURLConnection.setConnectTimeout(35000);
-            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setRequestMethod("GET");
             httpURLConnection.connect();
+            Log.e("Response_Code",httpURLConnection.getResponseCode()+"");
             if(httpURLConnection.getResponseCode() == 200){
                 inputStream = httpURLConnection.getInputStream();
                 response = readResponse(inputStream);
             }
 
-        }catch(IOException e){Log.d("HTTPURL","Http Url Connection exception");}
+        }catch(IOException e){Log.d("HTTPURL","Http Url Connection exception "+e.getMessage());}
 
         return response;
     }
@@ -52,7 +55,7 @@ public class ConnectionClass extends AsyncTask<String, Void, String> {
     private String readResponse(InputStream is){
         StringBuilder sb = new StringBuilder();
         if(is == null){
-            return "{}";
+            return "{error:'true'}";
         }else{
             InputStreamReader inputStreamReader = new InputStreamReader(is, Charset.forName("UTF-8"));
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
@@ -66,6 +69,7 @@ public class ConnectionClass extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String s) {
+
         connectivityInterface.onResultComplete(s);
     }
 }
