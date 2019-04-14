@@ -10,13 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.a3buttons.InternerPack.ConnectionClass;
+import com.example.a3buttons.InternerPack.GetConnectionClass;
 import com.example.a3buttons.InternerPack.ConnectivityInterface;
 import com.example.a3buttons.InternerPack.ConstantClass;
 
@@ -181,7 +179,7 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
                 "&mobile="+mobile_no.getText().toString()+"&s_date="+start_d.getText().toString()+"&e_date="+end_d.getText().toString()+
                 "&company_name="+company_nme.getText().toString()+"&p_type="+policy_tpe.getText().toString()+"&amount="+amt.getText().toString();
 
-        ConnectionClass connectionClass = new ConnectionClass(this);
+        GetConnectionClass connectionClass = new GetConnectionClass(this);
         connectionClass.execute(url);
     }
 

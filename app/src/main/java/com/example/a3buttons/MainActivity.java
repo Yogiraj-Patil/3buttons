@@ -8,11 +8,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 
-import com.example.a3buttons.InternerPack.ConnectionClass;
+import com.example.a3buttons.InternerPack.GetConnectionClass;
 import com.example.a3buttons.InternerPack.ConnectivityInterface;
 import com.example.a3buttons.InternerPack.ConstantClass;
+import com.example.a3buttons.InternerPack.InternetClass;
 import com.example.a3buttons.UserData.userDataClass;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +24,8 @@ public class MainActivity extends AppCompatActivity implements ConnectivityInter
 
     TextInputEditText username,password;
     MaterialButton nextbtn;
+    RelativeLayout progresslayout;
+    AVLoadingIndicatorView progressbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements ConnectivityInter
         username = (TextInputEditText)findViewById(R.id.username_edit_text);
         password = (TextInputEditText)findViewById(R.id.password_edit_text);
         nextbtn = (MaterialButton)findViewById(R.id.next_button);
+        progresslayout = (RelativeLayout)findViewById(R.id.relativeprogressbar);
+        progressbar = (AVLoadingIndicatorView)findViewById(R.id.progressanimation);
 
         nextbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,9 +47,12 @@ public class MainActivity extends AppCompatActivity implements ConnectivityInter
 
 
     private boolean getLogin(){
-        ConnectionClass connectionClass = new ConnectionClass(this);
+        GetConnectionClass connectionClass = new GetConnectionClass(this);
         String url = ConstantClass.Login+"id="+username.getText().toString()+"&pin="+password.getText().toString();
-        connectionClass.execute(url);
+        //connectionClass.execute(url);
+        InternetClass internetClass = new InternetClass(this,this);
+        internetClass.getData(url);
+        hideRelative();
         return true;
     }
 
@@ -60,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityInter
                 userDataClass.setMobile(jsonObject.getString("mobile"));
                 userDataClass.setUser_type(jsonObject.getString("type"));
                 userDataClass.setUser_area(jsonObject.getString("area"));
+                showRelative();
                 startActivity(new Intent(this,DashActivity.class));
                 overridePendingTransition(R.anim.anim_fade_in, R.anim.anim_fade_out);
                 finish();
@@ -71,7 +82,14 @@ public class MainActivity extends AppCompatActivity implements ConnectivityInter
     }
 
 
-    private void customeDialogbox(String message){
+    private void hideRelative(){
+        progresslayout.setVisibility(View.GONE);
+        progressbar.setVisibility(View.VISIBLE);
 
+    }
+
+    private void showRelative(){
+        progresslayout.setVisibility(View.VISIBLE);
+        progressbar.setVisibility(View.GONE);
     }
 }

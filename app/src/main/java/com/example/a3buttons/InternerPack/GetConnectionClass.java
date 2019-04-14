@@ -14,10 +14,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-public class ConnectionClass extends AsyncTask<String, Void, String> {
+public class GetConnectionClass extends AsyncTask<String, Void, String> {
 
     public ConnectivityInterface connectivityInterface = null;
-    public ConnectionClass(ConnectivityInterface interfaces){
+    public GetConnectionClass(ConnectivityInterface interfaces){
         this.connectivityInterface = interfaces;
     }
 
