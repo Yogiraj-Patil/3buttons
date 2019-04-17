@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Shrine">
-        <activity android:name=".Add_Policy"></activity>
+        <activity android:name=".DetailActivity"></activity>
+        <activity android:name=".Add_Policy" />
         <activity android:name=".DashActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

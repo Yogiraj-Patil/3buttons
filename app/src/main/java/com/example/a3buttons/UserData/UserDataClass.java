@@ -1,6 +1,6 @@
 package com.example.a3buttons.UserData;
 
-public class userDataClass {
+public class UserDataClass {
     private static String Name,email,user_id,mobile,user_type,user_area;
 
     public static String getName() {
@@ -16,7 +16,7 @@ public class userDataClass {
     }
 
     public static void setEmail(String email) {
-        userDataClass.email = email;
+        UserDataClass.email = email;
     }
 
     public static String getUser_id() {
@@ -24,7 +24,7 @@ public class userDataClass {
     }
 
     public static void setUser_id(String user_id) {
-        userDataClass.user_id = user_id;
+        UserDataClass.user_id = user_id;
     }
 
     public static String getMobile() {
@@ -32,7 +32,7 @@ public class userDataClass {
     }
 
     public static void setMobile(String mobile) {
-        userDataClass.mobile = mobile;
+        UserDataClass.mobile = mobile;
     }
 
     public static String getUser_type() {
@@ -40,7 +40,7 @@ public class userDataClass {
     }
 
     public static void setUser_type(String user_type) {
-        userDataClass.user_type = user_type;
+        UserDataClass.user_type = user_type;
     }
 
     public static String getUser_area() {
@@ -48,6 +48,6 @@ public class userDataClass {
     }
 
     public static void setUser_area(String user_area) {
-        userDataClass.user_area = user_area;
+        UserDataClass.user_area = user_area;
     }
 }

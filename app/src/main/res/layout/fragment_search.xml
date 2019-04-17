@@ -11,21 +11,23 @@
         android:layout_height="match_parent"
         android:layout_marginTop="8dp"
         android:orientation="vertical"
-        android:padding="5dp">
+        android:padding="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_margin="10dp">
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp">
         <AutoCompleteTextView
             android:id="@+id/autocompletesearch"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:completionThreshold="1"
-            android:hint="Select Text"/>
+            android:hint="Select Entry for Details"/>
             <ImageView
+                android:id="@+id/search_img"
                 android:layout_width="0dp"
                 android:layout_weight="0.1"
                 android:layout_height="40dp"
@@ -34,6 +36,7 @@
         </LinearLayout>
 
         <com.wang.avi.AVLoadingIndicatorView
+
             android:id="@+id/progressanimation"
             style="@style/AVLoadingIndicatorView.Large"
             android:layout_width="wrap_content"
@@ -41,7 +44,17 @@
             android:layout_gravity="center_horizontal"
             android:visibility="gone"
             app:indicatorColor="@color/colorPrimaryDark"
-            app:indicatorName="BallSpinFadeLoaderIndicator" />
+            app:indicatorName="BallTrianglePathIndicator" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/searchrecyclerview"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            />
+
+
 
     </LinearLayout>
 

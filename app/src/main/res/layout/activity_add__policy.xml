@@ -215,6 +215,30 @@
 
             <!-- __________________________end________________________________________   -->
 
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/remainTextInput"
+                style="@style/Widget.Shrine.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="30dp"
+                android:hint="Remaing Amount"
+                app:errorEnabled="true">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/remainamounttext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textAutoComplete" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- __________________________end________________________________________   -->
+
+
+
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

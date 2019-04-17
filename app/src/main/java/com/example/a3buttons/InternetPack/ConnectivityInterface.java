@@ -1,4 +1,4 @@
-package com.example.a3buttons.InternerPack;
+package com.example.a3buttons.InternetPack;
 
 public interface ConnectivityInterface {
 

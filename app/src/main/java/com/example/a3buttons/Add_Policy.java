@@ -1,6 +1,7 @@
 package com.example.a3buttons;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.design.button.MaterialButton;
@@ -13,10 +14,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.a3buttons.InternerPack.GetConnectionClass;
-import com.example.a3buttons.InternerPack.ConnectivityInterface;
-import com.example.a3buttons.InternerPack.ConstantClass;
+import com.example.a3buttons.InternetPack.ConnectivityInterface;
+import com.example.a3buttons.InternetPack.ConstantClass;
+import com.example.a3buttons.InternetPack.InternetClass;
+import com.example.a3buttons.UserData.UserDataClass;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,7 +31,7 @@ import java.util.Date;
 
 public class Add_Policy extends AppCompatActivity implements ConnectivityInterface {
 
-    TextInputEditText policy_id, customer_name, mobile_no, company_nme, policy_tpe, amt;
+    TextInputEditText policy_id, customer_name, mobile_no, company_nme, policy_tpe, amt, remainamt;
     TextView start_d, end_d;
     boolean ch;
     private DatePickerDialog.OnDateSetListener mDatesetListiner;
@@ -116,7 +122,8 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
         end_d = (TextView) findViewById(R.id.enddatetext);
         company_nme = (TextInputEditText) findViewById(R.id.companeytext);
         policy_tpe = (TextInputEditText) findViewById(R.id.policy_typetext);
-        amt = (TextInputEditText) findViewById(R.id.policy_typetext);
+        amt = (TextInputEditText) findViewById(R.id.amounttext);
+        remainamt = (TextInputEditText) findViewById(R.id.remainamounttext);
 
     }
 
@@ -162,12 +169,15 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
         } else if (amt.getText().length() < 2) {
             amt.setError("Enter Valid Amount");
             return false;
+        }else if (remainamt.getText().length() < 2) {
+            remainamt.setError("Enter Valid Amount");
+            return false;
         } else if (e_date.compareTo(s_date) < 0 || e_date.compareTo(s_date) == 0) {
             end_d.setError("Enter valid End Date");
             Log.e("EndDate", "Exception");
             return false;
         } else {
-            Snackbar.make(findViewById(android.R.id.content), "All is well", Snackbar.LENGTH_LONG).show();
+            //xyz@pqrSnackbar.make(findViewById(android.R.id.content), "All is well", Snackbar.LENGTH_LONG).show();
             callingDataInsert();
             return true;
         }
@@ -177,10 +187,17 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
     public void callingDataInsert(){
         String url = ConstantClass.Insert_record+"p_id="+policy_id.getText().toString()+"&c_name="+customer_name.getText().toString()+
                 "&mobile="+mobile_no.getText().toString()+"&s_date="+start_d.getText().toString()+"&e_date="+end_d.getText().toString()+
-                "&company_name="+company_nme.getText().toString()+"&p_type="+policy_tpe.getText().toString()+"&amount="+amt.getText().toString();
+                "&company_name="+company_nme.getText().toString()+"&p_type="+policy_tpe.getText().toString()+"&amount="+amt.getText().toString()+
+                "&user_id="+ UserDataClass.getUser_id()+"&remain_amt="+remainamt.getText().toString();
 
-        GetConnectionClass connectionClass = new GetConnectionClass(this);
-        connectionClass.execute(url);
+        //GetConnectionClass connectionClass = new GetConnectionClass(this);
+        //connectionClass.execute(url);
+
+        InternetClass internetClass = new InternetClass(this,this);
+        internetClass.postInsertData(url,"p_id",policy_id.getText().toString(),"c_name",customer_name.getText().toString(),
+                "mobile",mobile_no.getText().toString(),"s_date",start_d.getText().toString(),"e_date",end_d.getText().toString(),
+                "company_name",company_nme.getText().toString(),"p_type",policy_tpe.getText().toString(),"amount",amt.getText().toString(),
+                "user_id",UserDataClass.getUser_id().toString(),"remain_amt",remainamt.getText().toString());
     }
 
     @Override
@@ -191,6 +208,25 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
 
     @Override
     public void onResultComplete(String Output) {
+        //Log.e("String Data",""+Output);
+        //Toast.makeText(this,Output,Toast.LENGTH_SHORT).show();
+        try {
+            JSONObject object = new JSONObject(Output);
+            if (object.getBoolean("error")) {
+                Toast.makeText(this, object.getString("message"), Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Snackbar.make(findViewById(android.R.id.content),object.getString("message"),Snackbar.LENGTH_LONG).show();
+                resetAll();
+            }
+        }catch(JSONException e){Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();}
+
+    }
+
+    private void resetAll(){
+        policy_id.setText("");customer_name.setText("");mobile_no.setText("");start_d.setText("");end_d.setText("");
+        company_nme.setText("");policy_tpe.setText("");amt.setText("");
+        startActivity(new Intent(this,DashActivity.class));
 
     }
 }

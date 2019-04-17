@@ -1,9 +1,7 @@
-package com.example.a3buttons.InternerPack;
+package com.example.a3buttons.InternetPack;
 
 import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -10,11 +10,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.example.a3buttons.InternerPack.GetConnectionClass;
-import com.example.a3buttons.InternerPack.ConnectivityInterface;
-import com.example.a3buttons.InternerPack.ConstantClass;
-import com.example.a3buttons.InternerPack.InternetClass;
-import com.example.a3buttons.UserData.userDataClass;
+import com.example.a3buttons.InternetPack.GetConnectionClass;
+import com.example.a3buttons.InternetPack.ConnectivityInterface;
+import com.example.a3buttons.InternetPack.ConstantClass;
+import com.example.a3buttons.InternetPack.InternetClass;
+import com.example.a3buttons.UserData.UserDataClass;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONException;
@@ -62,14 +62,15 @@ public class MainActivity extends AppCompatActivity implements ConnectivityInter
             JSONObject jsonObject = new JSONObject(Output);
             if(jsonObject.getBoolean("error")){
                 Snackbar.make(findViewById(android.R.id.content),jsonObject.getString("message"),Snackbar.LENGTH_INDEFINITE).show();
+                showRelative();
             }
             if(!jsonObject.getBoolean("error")){
-                userDataClass.setName(jsonObject.getString("name"));
-                userDataClass.setEmail(jsonObject.getString("email"));
-                userDataClass.setUser_id(jsonObject.getString("id"));
-                userDataClass.setMobile(jsonObject.getString("mobile"));
-                userDataClass.setUser_type(jsonObject.getString("type"));
-                userDataClass.setUser_area(jsonObject.getString("area"));
+                UserDataClass.setName(jsonObject.getString("name"));
+                UserDataClass.setEmail(jsonObject.getString("email"));
+                UserDataClass.setUser_id(jsonObject.getString("id"));
+                UserDataClass.setMobile(jsonObject.getString("mobile"));
+                UserDataClass.setUser_type(jsonObject.getString("type"));
+                UserDataClass.setUser_area(jsonObject.getString("area"));
                 showRelative();
                 startActivity(new Intent(this,DashActivity.class));
                 overridePendingTransition(R.anim.anim_fade_in, R.anim.anim_fade_out);
