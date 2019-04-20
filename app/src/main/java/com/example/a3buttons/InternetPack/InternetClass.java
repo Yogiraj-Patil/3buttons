@@ -17,9 +17,12 @@ import java.util.Map;
 
 public class InternetClass  {
     ConnectivityInterface connectivityInterface =null;
+    ErrorPromptInterface errorPromptInterface = null;
     Context ctx;
-    public InternetClass(ConnectivityInterface connectivityInterface, Context context){
+
+    public InternetClass(ConnectivityInterface connectivityInterface, ErrorPromptInterface errorPromptInterface, Context context) {
         this.connectivityInterface = connectivityInterface;
+        this.errorPromptInterface = errorPromptInterface;
         ctx = context;
     }
 
@@ -34,7 +37,8 @@ public class InternetClass  {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(ctx,""+error.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctx, "" + error.getMessage() + " Volley", Toast.LENGTH_SHORT).show();
+                errorPromptInterface.onNetworkError(error.getMessage());
             }
         });
 

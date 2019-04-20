@@ -58,6 +58,7 @@ public class DashActivity extends AppCompatActivity {
 
     private void setuppager(ViewPager viewPager){
         CusAdapter adapter = new CusAdapter(getSupportFragmentManager());
+        adapter.addFragment(new RecentFragment(), "Expiring Policy");
         adapter.addFragment(new SearchFragment(),"Search Policy");
         adapter.addFragment(new Update_Fragment(),"Update Policy");
         viewPager.setAdapter(adapter);

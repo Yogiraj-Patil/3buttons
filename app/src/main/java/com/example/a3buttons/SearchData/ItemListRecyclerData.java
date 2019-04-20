@@ -2,14 +2,10 @@ package com.example.a3buttons.SearchData;
 
 public class ItemListRecyclerData {
 
-    private String name,s_date,e_date,r_amt,amt,policy_id,policy_type;
+    private String name, s_date, e_date, r_amt, amt, policy_id, policy_type, companey, contact;
     private int imgResource;
 
-    public String getPolicy_type() {
-        return policy_type;
-    }
-
-    public ItemListRecyclerData(String name, String s_date, String e_date, String r_amt, String amt, String policy_id, String type, int imgResource) {
+    public ItemListRecyclerData(String name, String s_date, String e_date, String r_amt, String amt, String policy_id, String type, String companey, String contact, int imgResource) {
         this.name = name;
         this.s_date = s_date;
         this.e_date = e_date;
@@ -18,6 +14,20 @@ public class ItemListRecyclerData {
         this.policy_id = policy_id;
         this.imgResource = imgResource;
         this.policy_type = type;
+        this.companey = companey;
+        this.contact = contact;
+    }
+
+    public String getCompaney() {
+        return companey;
+    }
+
+    public String getPolicy_type() {
+        return policy_type;
+    }
+
+    public String getContact() {
+        return contact;
     }
 
 

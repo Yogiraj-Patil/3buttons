@@ -15,7 +15,10 @@ import java.nio.charset.Charset;
 public class GetConnectionClass extends AsyncTask<String, Void, String> {
 
     public ConnectivityInterface connectivityInterface = null;
-    public GetConnectionClass(ConnectivityInterface interfaces){
+    public ErrorPromptInterface errorPromptInterface = null;
+
+    public GetConnectionClass(ConnectivityInterface interfaces, ErrorPromptInterface errorPromptInterface) {
+        this.errorPromptInterface = errorPromptInterface;
         this.connectivityInterface = interfaces;
     }
 

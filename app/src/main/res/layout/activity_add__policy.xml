@@ -47,7 +47,7 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/policy_idTextInput"
-                style="@style/Widget.Shrine.TextInputLayout"
+                style="@style/Widget.Shrine.TextInputLayout.withoutbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
@@ -60,12 +60,12 @@
                     android:id="@+id/policy_idtext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textAutoComplete" />
+                    android:inputType="textAutoComplete|textCapWords" />
             </android.support.design.widget.TextInputLayout>
             <!-- __________________________end________________________________________   -->
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/nameTextInput"
-                style="@style/Widget.Shrine.TextInputLayout"
+                style="@style/Widget.Shrine.TextInputLayout.withoutbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
@@ -78,14 +78,14 @@
                     android:id="@+id/nametext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textAutoComplete" />
+                    android:inputType="textAutoComplete|textCapWords" />
             </android.support.design.widget.TextInputLayout>
 
             <!-- __________________________end________________________________________   -->
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/mobileTextInput"
-                style="@style/Widget.Shrine.TextInputLayout"
+                style="@style/Widget.Shrine.TextInputLayout.withoutbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
@@ -113,7 +113,7 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/startdateTextInput"
-                    style="@style/Widget.Shrine.TextInputLayout"
+                    style="@style/Widget.Shrine.TextInputLayout.withoutbox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
@@ -131,7 +131,7 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/enddateTextInput"
-                    style="@style/Widget.Shrine.TextInputLayout"
+                    style="@style/Widget.Shrine.TextInputLayout.withoutbox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -155,20 +155,20 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/companeyTextInput"
-                style="@style/Widget.Shrine.TextInputLayout"
+                style="@style/Widget.Shrine.TextInputLayout.withoutbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="30dp"
-                android:hint="Company Name"
+                android:hint="Insured Company"
                 app:errorEnabled="true">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/companeytext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textAutoComplete" />
+                    android:inputType="textAutoComplete|textCapWords" />
             </android.support.design.widget.TextInputLayout>
 
 
@@ -176,7 +176,7 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/policy_typeTextInput"
-                style="@style/Widget.Shrine.TextInputLayout"
+                style="@style/Widget.Shrine.TextInputLayout.withoutbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
@@ -189,15 +189,26 @@
                     android:id="@+id/policy_typetext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textAutoComplete" />
+                    android:inputType="textAutoComplete|textCapWords" />
             </android.support.design.widget.TextInputLayout>
 
             <!-- __________________________end________________________________________   -->
 
 
+            <com.wang.avi.AVLoadingIndicatorView
+                android:id="@+id/progressanimation"
+                style="@style/AVLoadingIndicatorView.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone"
+                app:indicatorColor="@color/colorPrimaryDark"
+                app:indicatorName="SemiCircleSpinIndicator" />
+
+
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/amountTextInput"
-                style="@style/Widget.Shrine.TextInputLayout"
+                style="@style/Widget.Shrine.TextInputLayout.withoutbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
@@ -218,7 +229,7 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/remainTextInput"
-                style="@style/Widget.Shrine.TextInputLayout"
+                style="@style/Widget.Shrine.TextInputLayout.withoutbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"

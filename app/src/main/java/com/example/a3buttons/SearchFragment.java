@@ -1,6 +1,7 @@
 package com.example.a3buttons;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.a3buttons.InternetPack.ConnectivityInterface;
 import com.example.a3buttons.InternetPack.ConstantClass;
+import com.example.a3buttons.InternetPack.ErrorPromptInterface;
 import com.example.a3buttons.InternetPack.GetConnectionClass;
 import com.example.a3buttons.SearchData.ItemListClass;
 import com.example.a3buttons.SearchData.ItemListRecyclerData;
@@ -35,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class SearchFragment extends Fragment implements ConnectivityInterface {
+public class SearchFragment extends Fragment implements ConnectivityInterface, ErrorPromptInterface {
     View mainview;
     private List<ItemListClass> dataList;
     AutoCompleteTextView autoCompleteTextView;
@@ -43,12 +45,11 @@ public class SearchFragment extends Fragment implements ConnectivityInterface {
     RecyclerDataAdapter adapter;
     AVLoadingIndicatorView avLoadingIndicatorView;
     ArrayList<ItemListRecyclerData> items;
+    SharedPreferences preferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
 
 
     }
@@ -84,28 +85,24 @@ public class SearchFragment extends Fragment implements ConnectivityInterface {
     private void searchRelatedData(Context ctx){
         String data = autoCompleteTextView.getText().toString();
         String url = ConstantClass.Search_record+"user_id="+ UserDataClass.getUser_id().toString()+"&search_data="+data;
-        GetConnectionClass getConnectionClass = new GetConnectionClass( this);
+        GetConnectionClass getConnectionClass = new GetConnectionClass(this, this);
         getConnectionClass.execute(url);
     }
 
 
     private void fillCountryList(){
         dataList = new ArrayList<>();
-
-        dataList.add(new ItemListClass("Data1",R.drawable.search));
-        dataList.add(new ItemListClass("Bata",R.drawable.search));
-        dataList.add(new ItemListClass("Paragon",R.drawable.search));
-        dataList.add(new ItemListClass("Generation",R.drawable.search));
-        dataList.add(new ItemListClass("Generator",R.drawable.search));
-        dataList.add(new ItemListClass("Power",R.drawable.search));
-        dataList.add(new ItemListClass("Energy",R.drawable.search));
-        dataList.add(new ItemListClass("Sources",R.drawable.search));
-        dataList.add(new ItemListClass("1253",R.drawable.search));
-        dataList.add(new ItemListClass("43256",R.drawable.search));
-        dataList.add(new ItemListClass("336723",R.drawable.search));
-        dataList.add(new ItemListClass("5767568123",R.drawable.search));
-        dataList.add(new ItemListClass("0u87495",R.drawable.search));
-
+        SharedPreferences preferences = this.getActivity().getSharedPreferences(ConstantClass.PREF, this.getActivity().MODE_PRIVATE);
+        try {
+            JSONArray array = new JSONArray(preferences.getString("key", "Not Avalible"));
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                dataList.add(new ItemListClass(object.getString("Customer_name"), R.drawable.search));
+                dataList.add(new ItemListClass(object.getString("policy_id"), R.drawable.search));
+            }
+        } catch (JSONException e) {
+            Log.e("Exception", "" + e.getMessage());
+        }
     }
 
     private void showRecycler(){
@@ -125,7 +122,8 @@ public class SearchFragment extends Fragment implements ConnectivityInterface {
                     JSONObject obj = jarray.getJSONObject(i);
                     items.add(new ItemListRecyclerData(obj.getString("Customer_name"),obj.getString("policy_start_date"),
                             obj.getString("policy_end_date"),obj.getString("remain_amount"),obj.getString("policy_amount"),
-                            obj.getString("policy_id"),obj.getString("policy_id"),resource(i)));
+                            obj.getString("policy_id"), obj.getString("policy_type"), obj.getString("company_name"), obj.getString("mobileno"),
+                            resource(i)));
                 }
             }
 
@@ -157,4 +155,8 @@ public class SearchFragment extends Fragment implements ConnectivityInterface {
     }
 
 
+    @Override
+    public void onNetworkError(String message) {
+
+    }
 }

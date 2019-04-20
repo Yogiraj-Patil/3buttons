@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.design.button.MaterialButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -18,8 +19,10 @@ import android.widget.Toast;
 
 import com.example.a3buttons.InternetPack.ConnectivityInterface;
 import com.example.a3buttons.InternetPack.ConstantClass;
+import com.example.a3buttons.InternetPack.ErrorPromptInterface;
 import com.example.a3buttons.InternetPack.InternetClass;
 import com.example.a3buttons.UserData.UserDataClass;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,12 +32,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Add_Policy extends AppCompatActivity implements ConnectivityInterface {
+public class Add_Policy extends AppCompatActivity implements ConnectivityInterface, ErrorPromptInterface {
 
     TextInputEditText policy_id, customer_name, mobile_no, company_nme, policy_tpe, amt, remainamt;
+    TextInputLayout policy_idlayout;
     TextView start_d, end_d;
     boolean ch;
     private DatePickerDialog.OnDateSetListener mDatesetListiner;
+    AVLoadingIndicatorView loadingIndicatorView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +120,7 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
 
 
     private void assignAllView() {
+        loadingIndicatorView = (AVLoadingIndicatorView) findViewById(R.id.progressanimation);
         policy_id = (TextInputEditText) findViewById(R.id.policy_idtext);
         customer_name = (TextInputEditText) findViewById(R.id.nametext);
         mobile_no = (TextInputEditText) findViewById(R.id.mobiletext);
@@ -124,6 +130,8 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
         policy_tpe = (TextInputEditText) findViewById(R.id.policy_typetext);
         amt = (TextInputEditText) findViewById(R.id.amounttext);
         remainamt = (TextInputEditText) findViewById(R.id.remainamounttext);
+
+        policy_idlayout = (TextInputLayout) findViewById(R.id.policy_idTextInput);
 
     }
 
@@ -140,43 +148,56 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
         }
 
         if (policy_id.getText().toString().length() < 5) {
-            policy_id.setError("Enter Valid Lenght");
+            //policy_id.setError("Enter Valid Lenght");
+            //policy_id.requestFocus();
+            policy_idlayout.setError("Enter Valid Lenght");
+            policy_idlayout.requestFocus();
             return false;
         } else if (customer_name.getText().length() < 4) {
             customer_name.setError("Enter Valid Name");
+            customer_name.requestFocus();
             return false;
         } else if (mobile_no.getText().length() < 10 || mobile_no.getText().length() > 13) {
             mobile_no.setError("Enter Valid Number");
+            mobile_no.requestFocus();
             return false;
         } else if (start_d.getText().length() < 9) {
             start_d.setError("Enter Valid start Date");
+            start_d.requestFocus();
             Log.e("StartDate", "True");
             int a = start_d.getText().length();
             Log.e("Length", a + "");
             return false;
         } else if (end_d.getText().length() < 9) {
             end_d.setError("Enter Valid End Date");
+            end_d.requestFocus();
             int a = end_d.getText().length();
             Log.e("Length", a + "");
             Log.e("EndDate", "True");
             return false;
         } else if (company_nme.getText().length() < 3) {
             company_nme.setError("Enter Valid Company Name");
+            company_nme.requestFocus();
             return false;
         } else if (policy_tpe.getText().length() < 2) {
             policy_tpe.setError("Enter valid Policy Type");
+            policy_tpe.requestFocus();
             return false;
         } else if (amt.getText().length() < 2) {
             amt.setError("Enter Valid Amount");
+            amt.requestFocus();
             return false;
         }else if (remainamt.getText().length() < 2) {
             remainamt.setError("Enter Valid Amount");
+            remainamt.requestFocus();
             return false;
         } else if (e_date.compareTo(s_date) < 0 || e_date.compareTo(s_date) == 0) {
             end_d.setError("Enter valid End Date");
+            end_d.requestFocus();
             Log.e("EndDate", "Exception");
             return false;
         } else {
+            loadingIndicatorView.setVisibility(View.VISIBLE);
             //xyz@pqrSnackbar.make(findViewById(android.R.id.content), "All is well", Snackbar.LENGTH_LONG).show();
             callingDataInsert();
             return true;
@@ -193,7 +214,7 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
         //GetConnectionClass connectionClass = new GetConnectionClass(this);
         //connectionClass.execute(url);
 
-        InternetClass internetClass = new InternetClass(this,this);
+        InternetClass internetClass = new InternetClass(this, this, this);
         internetClass.postInsertData(url,"p_id",policy_id.getText().toString(),"c_name",customer_name.getText().toString(),
                 "mobile",mobile_no.getText().toString(),"s_date",start_d.getText().toString(),"e_date",end_d.getText().toString(),
                 "company_name",company_nme.getText().toString(),"p_type",policy_tpe.getText().toString(),"amount",amt.getText().toString(),
@@ -224,9 +245,15 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
     }
 
     private void resetAll(){
+        loadingIndicatorView.setVisibility(View.GONE);
         policy_id.setText("");customer_name.setText("");mobile_no.setText("");start_d.setText("");end_d.setText("");
         company_nme.setText("");policy_tpe.setText("");amt.setText("");
         startActivity(new Intent(this,DashActivity.class));
+
+    }
+
+    @Override
+    public void onNetworkError(String message) {
 
     }
 }
