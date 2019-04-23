@@ -1,19 +1,35 @@
 package com.example.a3buttons;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.button.MaterialButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,22 +40,38 @@ import com.example.a3buttons.InternetPack.InternetClass;
 import com.example.a3buttons.UserData.UserDataClass;
 import com.wang.avi.AVLoadingIndicatorView;
 
+import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.ServerResponse;
+import net.gotev.uploadservice.UploadInfo;
+import net.gotev.uploadservice.UploadNotificationConfig;
+import net.gotev.uploadservice.UploadStatusDelegate;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 public class Add_Policy extends AppCompatActivity implements ConnectivityInterface, ErrorPromptInterface {
 
     TextInputEditText policy_id, customer_name, mobile_no, company_nme, policy_tpe, amt, remainamt;
     TextInputLayout policy_idlayout;
     TextView start_d, end_d;
+    private final int requestCODE = 1;
+    ScrollView scrollView;
     boolean ch;
     private DatePickerDialog.OnDateSetListener mDatesetListiner;
     AVLoadingIndicatorView loadingIndicatorView;
+    ImageView attachemntView;
+    long time = System.currentTimeMillis();
+    private Uri uri = null;
+    private Bitmap bitmap = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,15 +111,18 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
             @Override
             public void onClick(View v) {
                 ch = true;
+                hideSoftKeyboard(start_d);
                 datePicker();
             }
         });
 
 
+
         end_d.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 ch = false;
+                hideSoftKeyboard(end_d);
                 datePicker();
             }
         });
@@ -105,7 +140,79 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
             }
         };
 
+        attachemntView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                askpermissions();
+            }
+        });
+
     }
+
+    public void hideSoftKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+    }
+
+    private void askpermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            openSelectBox();
+            return;
+        }
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 101) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openSelectBox();
+            } else {
+                Snackbar.make(findViewById(android.R.id.content), "Please Allow Permission to upload Recipt", Snackbar.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void openSelectBox() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, requestCODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        if (requestCODE == requestCode && resultCode == RESULT_OK && data != null) {
+            uri = data.getData();
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                attachemntView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private String getPath(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        String doc_id = cursor.getString(0);
+        doc_id = doc_id.substring(doc_id.lastIndexOf(":") + 1);
+        cursor.close();
+
+        cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null,
+                MediaStore.Images.Media._ID + " = ? ", new String[]{doc_id}, null);
+        cursor.moveToFirst();
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        cursor.close();
+        return path;
+    }
+
+
 
     private void datePicker() {
         Calendar cal = Calendar.getInstance();
@@ -113,13 +220,17 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog dialog = new DatePickerDialog(this, android.R.style.Theme_Holo_Light_Dialog_MinWidth, mDatesetListiner, year, month, day);
+        //Theme_Holo_Light_Dialog_MinWidth
+        DatePickerDialog dialog = new DatePickerDialog(this, mDatesetListiner, year, month, day);
+        dialog.getDatePicker().setSpinnersShown(true);
+        dialog.getDatePicker().setCalendarViewShown(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
 
 
     private void assignAllView() {
+        scrollView = (ScrollView) findViewById(R.id.scrollView);
         loadingIndicatorView = (AVLoadingIndicatorView) findViewById(R.id.progressanimation);
         policy_id = (TextInputEditText) findViewById(R.id.policy_idtext);
         customer_name = (TextInputEditText) findViewById(R.id.nametext);
@@ -130,11 +241,21 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
         policy_tpe = (TextInputEditText) findViewById(R.id.policy_typetext);
         amt = (TextInputEditText) findViewById(R.id.amounttext);
         remainamt = (TextInputEditText) findViewById(R.id.remainamounttext);
+        attachemntView = (ImageView) findViewById(R.id.attachmentView);
 
+
+        //setDate();
         policy_idlayout = (TextInputLayout) findViewById(R.id.policy_idTextInput);
 
     }
 
+    private void setDate() {
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+        start_d.setText(sdf.format(c));
+        end_d.setText(sdf.format(c));
+    }
 
     private boolean validateFields() {
 
@@ -198,6 +319,7 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
             return false;
         } else {
             loadingIndicatorView.setVisibility(View.VISIBLE);
+            scrollView.setVisibility(View.GONE);
             //xyz@pqrSnackbar.make(findViewById(android.R.id.content), "All is well", Snackbar.LENGTH_LONG).show();
             callingDataInsert();
             return true;
@@ -214,11 +336,72 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
         //GetConnectionClass connectionClass = new GetConnectionClass(this);
         //connectionClass.execute(url);
 
-        InternetClass internetClass = new InternetClass(this, this, this);
-        internetClass.postInsertData(url,"p_id",policy_id.getText().toString(),"c_name",customer_name.getText().toString(),
-                "mobile",mobile_no.getText().toString(),"s_date",start_d.getText().toString(),"e_date",end_d.getText().toString(),
-                "company_name",company_nme.getText().toString(),"p_type",policy_tpe.getText().toString(),"amount",amt.getText().toString(),
-                "user_id",UserDataClass.getUser_id().toString(),"remain_amt",remainamt.getText().toString());
+
+        String path = getPath(uri);
+        if (path == null) {
+            InternetClass internetClass = new InternetClass(this, this, this);
+            internetClass.postInsertData(url, "p_id", policy_id.getText().toString(), "c_name", customer_name.getText().toString(),
+                    "mobile",mobile_no.getText().toString(),"s_date",start_d.getText().toString(),"e_date",end_d.getText().toString(),
+                    "company_name",company_nme.getText().toString(),"p_type",policy_tpe.getText().toString(),"amount",amt.getText().toString(),
+                    "user_id",UserDataClass.getUser_id().toString(),"remain_amt",remainamt.getText().toString());
+
+        } else {
+            uploadData(path);
+        }
+
+    }
+
+    private void uploadData(String path) {
+        String name = String.valueOf(time);
+
+        try {
+            String uploadid = UUID.randomUUID().toString();
+            new MultipartUploadRequest(this, uploadid, ConstantClass.Insert_record_with_images)
+                    .addFileToUpload(path, "image")
+                    .addParameter(policy_id.getText().toString().trim(), "p_id")
+                    .addParameter(customer_name.getText().toString().trim(), "c_name")
+                    .addParameter(mobile_no.getText().toString().trim(), "mobile")
+                    .addParameter(start_d.getText().toString().trim(), "s_date")
+                    .addParameter(end_d.getText().toString().trim(), "e_date")
+                    .addParameter(company_nme.getText().toString().trim(), "company_name")
+                    .addParameter(policy_tpe.getText().toString().trim(), "p_type")
+                    .addParameter(amt.getText().toString().trim(), "amount")
+                    .addParameter(UserDataClass.getUser_id().toString().trim(), "user_id")
+                    .addParameter(remainamt.getText().toString().trim(), "remain_amt")
+                    .setNotificationConfig(new UploadNotificationConfig())
+                    .setMaxRetries(2)
+                    .setDelegate(new UploadStatusDelegate() {
+                        @Override
+                        public void onProgress(Context context, UploadInfo uploadInfo) {
+
+                        }
+
+                        @Override
+                        public void onError(Context context, UploadInfo uploadInfo, ServerResponse serverResponse, Exception exception) {
+                            loadingIndicatorView.setVisibility(View.GONE);
+                            scrollView.setVisibility(View.VISIBLE);
+                            showSnackbar("Please Check your Connection " + exception.getMessage());
+                        }
+
+                        @Override
+                        public void onCompleted(Context context, UploadInfo uploadInfo, ServerResponse serverResponse) {
+                            loadingIndicatorView.setVisibility(View.GONE);
+                            resetAll();
+                        }
+
+                        @Override
+                        public void onCancelled(Context context, UploadInfo uploadInfo) {
+                            loadingIndicatorView.setVisibility(View.GONE);
+                            scrollView.setVisibility(View.VISIBLE);
+                            showSnackbar("Request Stope By User");
+                        }
+                    })
+                    .startUpload();
+        } catch (FileNotFoundException e) {
+            e.fillInStackTrace();
+        } catch (MalformedURLException e) {
+            e.fillInStackTrace();
+        }
     }
 
     @Override
@@ -246,8 +429,16 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
 
     private void resetAll(){
         loadingIndicatorView.setVisibility(View.GONE);
-        policy_id.setText("");customer_name.setText("");mobile_no.setText("");start_d.setText("");end_d.setText("");
-        company_nme.setText("");policy_tpe.setText("");amt.setText("");
+
+        policy_id.setText(" ");
+        customer_name.setText(" ");
+        mobile_no.setText(" ");
+        start_d.setText(" ");
+        end_d.setText(" ");
+        company_nme.setText(" ");
+        policy_tpe.setText(" ");
+        amt.setText(" ");
+        scrollView.setVisibility(View.VISIBLE);
         startActivity(new Intent(this,DashActivity.class));
 
     }
@@ -256,4 +447,16 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
     public void onNetworkError(String message) {
 
     }
+
+
+    private void showSnackbar(String msg) {
+        Snackbar.make(findViewById(android.R.id.content), "" + msg, Snackbar.LENGTH_LONG).show();
+    }
+
+    private void showToast(String msg) {
+        Toast.makeText(this, "" + msg, Toast.LENGTH_LONG).show();
+    }
+
+
+
 }

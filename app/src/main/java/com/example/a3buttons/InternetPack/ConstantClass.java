@@ -7,4 +7,5 @@ public class ConstantClass {
     public static String Login = ""+BASE_URL+"login.php?";
     public static String Insert_record = ""+BASE_URL+"insert_policy.php/?";
     public static String Search_record = ""+BASE_URL+"search_policy.php/?";
+    public static String Insert_record_with_images = "" + BASE_URL + "insert_policy_with_data.php/?";
 }

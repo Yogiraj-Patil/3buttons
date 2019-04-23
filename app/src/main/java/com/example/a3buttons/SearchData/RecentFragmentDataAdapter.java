@@ -2,6 +2,7 @@ package com.example.a3buttons.SearchData;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +56,16 @@ public class RecentFragmentDataAdapter extends RecyclerView.Adapter<RecentFragme
             }
         });
 
+        viewHolderClass.sms_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = Uri.parse("smsto:" + data.getContact());
+                Intent it = new Intent(Intent.ACTION_SEND, uri);
+                it.putExtra("sms_body", "This is SMS Text for Sending");
+                view.getContext().startActivity(it);
+            }
+        });
+
 
     }
 
@@ -64,6 +76,7 @@ public class RecentFragmentDataAdapter extends RecyclerView.Adapter<RecentFragme
 
     public class ViewHolderClass extends RecyclerView.ViewHolder {
         public TextView nametext, policy_name, end_date, policy_amount;
+        public ImageView sms_icon;
         public CardView cv;
 
         public ViewHolderClass(@NonNull View itemView) {
@@ -73,6 +86,7 @@ public class RecentFragmentDataAdapter extends RecyclerView.Adapter<RecentFragme
             policy_name = (TextView) itemView.findViewById(R.id.policytype);
             end_date = (TextView) itemView.findViewById(R.id.end_dates);
             policy_amount = (TextView) itemView.findViewById(R.id.amts);
+            sms_icon = (ImageView) itemView.findViewById(R.id.sms_icon);
         }
     }
 

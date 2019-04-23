@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardviewrecent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
@@ -21,11 +21,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/loginPageBackgroundColor"
+            android:orientation="horizontal"
             android:padding="10dp">
 
             <TextView
                 android:id="@+id/name_text"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
@@ -34,6 +36,15 @@
                 android:textSize="22sp"
                 android:textStyle="bold"
                 tools:text="Yogiraj Govind Patil" />
+
+            <ImageView
+                android:id="@+id/sms_icon"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight=".2"
+                android:src="@drawable/message_icon" />
         </LinearLayout>
 
         <RelativeLayout
