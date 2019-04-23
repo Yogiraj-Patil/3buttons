@@ -98,7 +98,7 @@ public class SearchFragment extends Fragment implements ConnectivityInterface, E
             for (int i = 0; i < array.length(); i++) {
                 JSONObject object = array.getJSONObject(i);
                 dataList.add(new ItemListClass(object.getString("Customer_name"), R.drawable.search));
-                dataList.add(new ItemListClass(object.getString("policy_id"), R.drawable.search));
+                dataList.add(new ItemListClass(object.getString("mobileno"), R.drawable.search));
             }
         } catch (JSONException e) {
             Log.e("Exception", "" + e.getMessage());
@@ -142,7 +142,7 @@ public class SearchFragment extends Fragment implements ConnectivityInterface, E
     }
 
     private int resource(int i){
-        int x = i%5;
+        int x = i % 3;
         if(x==1){
             return R.mipmap.a;
         }else if(x==2){

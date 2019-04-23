@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".Add_Policy">
+    android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         style="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
@@ -37,6 +36,7 @@
             <!-- __________________________end________________________________________   -->
 
             <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/fields"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
@@ -239,7 +239,7 @@
                     android:id="@+id/remainamounttext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textAutoComplete" />
+                    android:inputType="textAutoComplete|numberDecimal" />
             </android.support.design.widget.TextInputLayout>
 
             <!-- __________________________end________________________________________   -->

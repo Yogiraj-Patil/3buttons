@@ -7,9 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,14 +19,12 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -37,6 +34,8 @@ import com.example.a3buttons.InternetPack.ConnectivityInterface;
 import com.example.a3buttons.InternetPack.ConstantClass;
 import com.example.a3buttons.InternetPack.ErrorPromptInterface;
 import com.example.a3buttons.InternetPack.InternetClass;
+import com.example.a3buttons.SearchData.ItemListRecyclerData;
+import com.example.a3buttons.SearchData.StorageClass;
 import com.example.a3buttons.UserData.UserDataClass;
 import com.wang.avi.AVLoadingIndicatorView;
 
@@ -58,18 +57,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
-public class Add_Policy extends AppCompatActivity implements ConnectivityInterface, ErrorPromptInterface {
+public class Update_Policy extends AppCompatActivity implements ConnectivityInterface, ErrorPromptInterface {
 
+    private final int requestCODE = 1;
+    ItemListRecyclerData list;
     TextInputEditText policy_id, customer_name, mobile_no, company_nme, policy_tpe, amt, remainamt;
     TextInputLayout policy_idlayout;
     TextView start_d, end_d;
-    private final int requestCODE = 1;
     ScrollView scrollView;
     boolean ch;
-    private DatePickerDialog.OnDateSetListener mDatesetListiner;
     AVLoadingIndicatorView loadingIndicatorView;
     ImageView attachemntView;
     long time = System.currentTimeMillis();
+    private DatePickerDialog.OnDateSetListener mDatesetListiner;
     private Uri uri = null;
     private Bitmap bitmap = null;
 
@@ -82,10 +82,16 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
         Toolbar toolbar = (Toolbar) findViewById(R.id.policytoolbar);
         setSupportActionBar(toolbar);
 
+        toolbar.setTitle("Update Policy Details");
+
+        AppCompatTextView textView = (AppCompatTextView) findViewById(R.id.fields);
+        textView.setText("Update Your Fields");
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-       // getSupportActionBar().setDisplayShowHomeEnabled(true);
+        // getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
+        list = StorageClass.data;
 
 
         MaterialButton backbtn = (MaterialButton) findViewById(R.id.back_button);
@@ -97,6 +103,7 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
         });
 
         assignAllView();
+        setAllData();
 
         MaterialButton submit = (MaterialButton) findViewById(R.id.submit_button);
         submit.setOnClickListener(new View.OnClickListener() {
@@ -105,6 +112,8 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
                 validateFields();
             }
         });
+
+        submit.setText("Update");
 
 
         start_d.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +124,6 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
                 datePicker();
             }
         });
-
 
 
         end_d.setOnClickListener(new View.OnClickListener() {
@@ -147,7 +155,9 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
             }
         });
 
+
     }
+
 
     public void hideSoftKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -197,6 +207,7 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
         }
     }
 
+
     private String getPath(Uri uri) {
         if (uri != null) {
             Cursor cursor = getContentResolver().query(uri, null, null, null, null);
@@ -215,7 +226,6 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
             return null;
         }
     }
-
 
 
     private void datePicker() {
@@ -253,8 +263,36 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
 
     }
 
-    private void setDate() {
+    private void setAllData() {
+        policy_id.setText(list.getPolicy_id().trim());
+        customer_name.setText(list.getName().trim());
+        mobile_no.setText(list.getContact().trim());
+        company_nme.setText(list.getCompaney().trim());
+        policy_tpe.setText(list.getPolicy_type().trim());
+        amt.setText(list.getAmt().trim());
+        remainamt.setText(list.getR_amt().trim());
+        start_d.setText(getDate(list.getS_date().trim()));
+        end_d.setText(getDate(list.getE_date().trim()));
+
+
+    }
+
+    private String getDate(String data) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date newDate = null;
+        try {
+            newDate = sdf.parse(data);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String dte = sdf.format(newDate);
+        return dte;
+    }
+
+    private void setDate(Date date) {
         Date c = Calendar.getInstance().getTime();
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
         start_d.setText(sdf.format(c));
@@ -331,11 +369,11 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
 
     }
 
-    public void callingDataInsert(){
-        String url = ConstantClass.Insert_record+"p_id="+policy_id.getText().toString()+"&c_name="+customer_name.getText().toString()+
-                "&mobile="+mobile_no.getText().toString()+"&s_date="+start_d.getText().toString()+"&e_date="+end_d.getText().toString()+
-                "&company_name="+company_nme.getText().toString()+"&p_type="+policy_tpe.getText().toString()+"&amount="+amt.getText().toString()+
-                "&user_id="+ UserDataClass.getUser_id()+"&remain_amt="+remainamt.getText().toString();
+    public void callingDataInsert() {
+        String url = ConstantClass.Insert_record + "p_id=" + policy_id.getText().toString() + "&c_name=" + customer_name.getText().toString() +
+                "&mobile=" + mobile_no.getText().toString() + "&s_date=" + start_d.getText().toString() + "&e_date=" + end_d.getText().toString() +
+                "&company_name=" + company_nme.getText().toString() + "&p_type=" + policy_tpe.getText().toString() + "&amount=" + amt.getText().toString() +
+                "&user_id=" + UserDataClass.getUser_id() + "&remain_amt=" + remainamt.getText().toString();
 
         //GetConnectionClass connectionClass = new GetConnectionClass(this);
         //connectionClass.execute(url);
@@ -345,17 +383,20 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
         if (path == null) {
             Log.e("Path", "It is Null");
             InternetClass internetClass = new InternetClass(this, this, this);
-            internetClass.postInsertData(url, "p_id", policy_id.getText().toString(), "c_name", customer_name.getText().toString(),
+            /*internetClass.postInsertData(url, "p_id", policy_id.getText().toString(), "c_name", customer_name.getText().toString(),
                     "mobile",mobile_no.getText().toString(),"s_date",start_d.getText().toString(),"e_date",end_d.getText().toString(),
                     "company_name",company_nme.getText().toString(),"p_type",policy_tpe.getText().toString(),"amount",amt.getText().toString(),
                     "user_id",UserDataClass.getUser_id().toString(),"remain_amt",remainamt.getText().toString());
-
+*/
         } else {
             Log.e("Path", "It is Not Null");
-            uploadData(path);
+            //uploadData(path);
         }
 
+        resetAll();
+        showToast("Data Updated Successfully");
     }
+
 
     private void uploadData(String path) {
         String name = String.valueOf(time);
@@ -438,16 +479,17 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
             JSONObject object = new JSONObject(Output);
             if (object.getBoolean("error")) {
                 Toast.makeText(this, object.getString("message"), Toast.LENGTH_SHORT).show();
-            }
-            else{
-                Snackbar.make(findViewById(android.R.id.content),object.getString("message"),Snackbar.LENGTH_LONG).show();
+            } else {
+                Snackbar.make(findViewById(android.R.id.content), object.getString("message"), Snackbar.LENGTH_LONG).show();
                 resetAll();
             }
-        }catch(JSONException e){Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();}
+        } catch (JSONException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
     }
 
-    private void resetAll(){
+    private void resetAll() {
         loadingIndicatorView.setVisibility(View.GONE);
 
         policy_id.setText(" ");
@@ -459,7 +501,7 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
         policy_tpe.setText(" ");
         amt.setText(" ");
         scrollView.setVisibility(View.VISIBLE);
-        startActivity(new Intent(this,DashActivity.class));
+        startActivity(new Intent(this, DashActivity.class));
 
     }
 
@@ -476,7 +518,6 @@ public class Add_Policy extends AppCompatActivity implements ConnectivityInterfa
     private void showToast(String msg) {
         Toast.makeText(this, "" + msg, Toast.LENGTH_LONG).show();
     }
-
 
 
 }

@@ -15,6 +15,7 @@
         android:theme="@style/Theme.Shrine">
         <activity android:name=".DetailActivity"></activity>
         <activity android:name=".Add_Policy" />
+        <activity android:name=".Update_Policy" />
         <activity android:name=".DashActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

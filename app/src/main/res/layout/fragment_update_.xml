@@ -27,6 +27,7 @@
                 android:completionThreshold="1"
                 android:hint="Select Entry For Update "/>
             <ImageView
+                android:id="@+id/search_imgs"
                 android:layout_width="0dp"
                 android:layout_weight="0.1"
                 android:layout_height="40dp"
@@ -43,6 +44,14 @@
             android:visibility="gone"
             app:indicatorColor="@color/colorPrimaryDark"
             app:indicatorName="BallSpinFadeLoaderIndicator" />
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/updaterecyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:visibility="gone" />
 
     </LinearLayout>
 
